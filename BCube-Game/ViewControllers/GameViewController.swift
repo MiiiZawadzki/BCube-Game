@@ -30,4 +30,7 @@ class GameViewController: UIViewController {
     gameAreaView.showsNodeCount = true
     gameAreaView.showsPhysics = true
     }
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
 }
