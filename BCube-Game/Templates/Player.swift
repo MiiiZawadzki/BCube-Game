@@ -6,12 +6,14 @@ class Player{
         self.canJump = true
         self.collideWithObstacle = false
         self.distance = 0.0
+        self.speed = 4.0
         self.direction = .center
     }
     var body: SKSpriteNode!
     var canJump: Bool!
     var collideWithObstacle: Bool!
     var distance: Float!
+    var speed: CGFloat!
     var direction: Direction!
 }
 enum Direction {

@@ -14,6 +14,7 @@
 		9077A10725A5F7A000931E9C /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9077A10625A5F7A000931E9C /* GameViewController.swift */; };
 		9077A10A25A5F7A000931E9C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9077A10825A5F7A000931E9C /* Main.storyboard */; };
 		9077A10C25A5F7A200931E9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9077A10B25A5F7A200931E9C /* Assets.xcassets */; };
+		90FCD37225B2416900B5377D /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FCD37125B2416900B5377D /* Obstacle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		9077A10925A5F7A000931E9C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9077A10B25A5F7A200931E9C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9077A10D25A5F7A200931E9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90FCD37125B2416900B5377D /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 			children = (
 				9077A0FE25A5F7A000931E9C /* AppDelegate.swift */,
 				900F3E4D25AB9398001BECEF /* Player.swift */,
+				90FCD37125B2416900B5377D /* Obstacle.swift */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 			files = (
 				900F3E4E25AB9398001BECEF /* Player.swift in Sources */,
 				9077A10525A5F7A000931E9C /* GameScene.swift in Sources */,
+				90FCD37225B2416900B5377D /* Obstacle.swift in Sources */,
 				9077A10725A5F7A000931E9C /* GameViewController.swift in Sources */,
 				9077A0FF25A5F7A000931E9C /* AppDelegate.swift in Sources */,
 			);
@@ -324,7 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "MZ.BCube-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -343,7 +347,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "MZ.BCube-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -17,18 +17,19 @@ class GameViewController: UIViewController {
         
         
     // Load the SKScene from 'GameScene.sks'
-    let scene = GameScene(size: gameAreaView.bounds.size)
+    let scene = GameScene()
+        scene.backgroundColor = UIColor(named: "BackgroundColor")!
     // Set the scale mode to scale to fit the window
     scene.scaleMode = .aspectFill
-    
+    scene.size = gameAreaView.bounds.size
     gameAreaView.presentScene(scene)
-
+        
 
     gameAreaView.ignoresSiblingOrder = true
 
-    gameAreaView.showsFPS = true
-    gameAreaView.showsNodeCount = true
-    gameAreaView.showsPhysics = true
+//    gameAreaView.showsFPS = true
+//    gameAreaView.showsNodeCount = true
+//    gameAreaView.showsPhysics = true
     }
     override var prefersStatusBarHidden: Bool {
         return true
