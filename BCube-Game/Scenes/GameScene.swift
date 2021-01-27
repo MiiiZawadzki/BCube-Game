@@ -1,10 +1,3 @@
-//
-//  GameScene.swift
-//  BCube-Game
-//
-//  Created by Michał on 06/01/2021.
-//
-
 import SpriteKit
 import UIKit
 
@@ -13,6 +6,8 @@ class GameScene: SKScene {
     var distanceLabel: SKLabelNode!
     var ground:SKSpriteNode!
     var obstacle: Obstacle!
+    var moonObject: SKSpriteNode!
+    var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
     var backgroundSpeed:CGFloat = 1.0
     override func didMove(to view: SKView) {        
@@ -46,15 +41,26 @@ class GameScene: SKScene {
         ground.physicsBody?.isDynamic = false
         addChild(ground)
         
+        // generate background objects
         backgroundObjects = createRandomBackroundObjects()
+        // generate obstacles
         obstacle = createRandomObstacle()
-
+        // generate stars
+        stars = createRandomStars()
+        
+        // create distance label
         distanceLabel = SKLabelNode(text: String(player.distance))
         distanceLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 40)
         distanceLabel.fontColor = UIColor.white
         distanceLabel.zPosition = 2
         distanceLabel.fontSize = 32
         addChild(distanceLabel)
+        
+        // create moon object
+        moonObject = SKSpriteNode(color: UIColor(named: "moonColor")!, size: CGSize(width: 70, height: 70))
+        moonObject.position = CGPoint(x: frame.midX + 100, y: frame.maxY - 180)
+        moonObject.zPosition = -5
+        addChild(moonObject)
         
         // add gesture recognizer
         let swipeUp = UISwipeGestureRecognizer()
@@ -132,6 +138,12 @@ class GameScene: SKScene {
                 backgroundObjects = backgroundObjects.filter({$0 !== obj})
             }
         }
+        for star in stars{
+            star.position.x -= 0.05
+            if star.frame.maxX <= frame.minX{
+                star.position.x = frame.maxX + 2
+            }
+        }
     }
     func controlPlayer(){
         // control x-axis position
@@ -205,7 +217,17 @@ class GameScene: SKScene {
         addChild(obstacleObject.body)
         return obstacleObject
     }
-    
+    func createRandomStars() -> [SKSpriteNode]{
+        var result = [SKSpriteNode]()
+        for _ in 0..<Int.random(in: 80..<90) {
+            let star = SKSpriteNode(color: UIColor(named: "StarColor")!, size: CGSize(width: 1, height: 1))
+            star.position = CGPoint(x: CGFloat.random(in: frame.minX..<frame.maxX), y: CGFloat.random(in: (ground.position.y+ground.size.height)..<frame.maxY))
+            star.zPosition = -6
+            result.append(star)
+            addChild(star)
+        }
+        return result
+    }
     func cubeCollisionBetween(cube: SKNode, object: SKNode) {
         if object.name == "ground" {
             player.canJump = true
