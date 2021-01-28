@@ -10,6 +10,7 @@ class GameScene: SKScene {
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
     var backgroundSpeed:CGFloat = 1.0
+    var hint = SKSpriteNode(color: UIColor.green, size: CGSize(width: 5, height: 5))
     override func didMove(to view: SKView) {        
         // set world physics
         physicsWorld.contactDelegate = self
@@ -62,6 +63,10 @@ class GameScene: SKScene {
         moonObject.zPosition = -5
         addChild(moonObject)
         
+        // add hint square
+        hint.zPosition = 2
+        addChild(hint)
+        
         // add gesture recognizer
         let swipeUp = UISwipeGestureRecognizer()
         let swipeDown = UISwipeGestureRecognizer()
@@ -102,8 +107,27 @@ class GameScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        // set hint position
+        hint.isHidden = false
+        let midH = frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2
+        switch obstacle.orientation {
+        case .bottom:
+            hint.position = CGPoint(x: frame.maxX - 10, y: (ground.position.y + 0.5*ground.size.height) + 10)
+        case .center:
+            hint.position = CGPoint(x: frame.maxX - 10, y: midH)
+        case .top:
+            hint.position = CGPoint(x: frame.maxX - 10, y: frame.maxY - 10)
+        default:
+            hint.position = CGPoint(x: frame.maxX - 10, y: ground.position.y + 100)
+        }
+        if obstacle.body.frame.minX <= frame.midX{
+            hint.isHidden = true
+        }
         
+        // Update distance label
         distanceLabel.text = String(format:"%.1f", player.distance)+"m"
+        
+        // if player cube position is lower than minX - slow down background and obstacle
         if player.body.position.x + player.body.size.width/2 < frame.minX{
             var dx1 = min(obstacle.speed, backgroundSpeed)
             var dx2 = dx1/max(obstacle.speed, backgroundSpeed) * dx1
@@ -118,6 +142,8 @@ class GameScene: SKScene {
         }
         else{
             controlPlayer()
+            
+            // increase speed every 10 meters
             obstacle.speed = CGFloat(Int(player.distance / 10))/5 + 4
             backgroundSpeed = CGFloat(Int(player.distance / 10)/2)/5 + 1
         }
@@ -125,11 +151,15 @@ class GameScene: SKScene {
             obstacle.body.removeFromParent()
             obstacle = createRandomObstacle()
         }
+        
+        // move obstacle
         obstacle.body.position.x -= obstacle.speed
         
         if backgroundObjects.count == 0{
             backgroundObjects = createRandomBackroundObjects()
         }
+        
+        // move background objects
         for obj in backgroundObjects{
             obj.position.x -= backgroundSpeed
             if obj.frame.maxX <= frame.minX{
@@ -138,6 +168,8 @@ class GameScene: SKScene {
                 backgroundObjects = backgroundObjects.filter({$0 !== obj})
             }
         }
+        
+        // move stars
         for star in stars{
             star.position.x -= 0.05
             if star.frame.maxX <= frame.minX{
@@ -200,16 +232,16 @@ class GameScene: SKScene {
         obstacleObject.body.zPosition = 1
         if orientation == 0{
             obstacleObject.orientation = .bottom
-            obstacleObject.body.position = CGPoint(x: frame.maxX + CGFloat.random(in: frame.minX..<frame.maxX) + 40, y: ground.position.y + 0.5*(obstacleObject.body.size.height + ground.size.height))
+            obstacleObject.body.position = CGPoint(x: frame.maxX + 100, y: ground.position.y + 0.5*(obstacleObject.body.size.height + ground.size.height))
         }
         if orientation == 1{
             obstacleObject.orientation = .top
-            obstacleObject.body.position = CGPoint(x: frame.maxX + CGFloat.random(in: frame.minX..<frame.maxX) + 40, y: frame.maxY - 0.5*object.size.height)
+            obstacleObject.body.position = CGPoint(x: frame.maxX + 100, y: frame.maxY - 0.5*object.size.height)
         }
         if orientation == 2{
             obstacleObject.orientation = .center
             obstacleObject.body.size.height = player.body.size.height*CGFloat.random(in: 2...5)
-            obstacleObject.body.position = CGPoint(x: frame.maxX + CGFloat.random(in: frame.minX..<frame.maxX) + 40, y: ground.position.y + (frame.maxY - ground.position.y)/2)
+            obstacleObject.body.position = CGPoint(x: frame.maxX + 100, y: ground.position.y + (frame.maxY - ground.position.y)/2)
         }
         obstacleObject.body.physicsBody = SKPhysicsBody(rectangleOf: obstacleObject.body.size)
         obstacleObject.body.physicsBody?.isDynamic = false
