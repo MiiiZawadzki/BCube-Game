@@ -10,7 +10,15 @@ class GameScene: SKScene {
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
     var backgroundSpeed:CGFloat = 1.0
-    var hint = SKSpriteNode(color: UIColor.green, size: CGSize(width: 5, height: 5))
+    var resourcesLoaded = false
+    var gameover = false
+    
+    var gameAreaView: SKView!
+    
+    var gameoverLabel = SKLabelNode(text: "GAME OVER!")
+    var tapToBackLabel = SKLabelNode(text: "tap to go back to menu")
+    
+    var hint = SKSpriteNode(color: UIColor(named: "HintColor")!, size: CGSize(width: 5, height: 5))
     override func didMove(to view: SKView) {        
         // set world physics
         physicsWorld.contactDelegate = self
@@ -42,23 +50,19 @@ class GameScene: SKScene {
         ground.physicsBody?.isDynamic = false
         addChild(ground)
         
-        // generate background objects
-        backgroundObjects = createRandomBackroundObjects()
         // generate obstacles
         obstacle = createRandomObstacle()
-        // generate stars
-        stars = createRandomStars()
         
         // create distance label
         distanceLabel = SKLabelNode(text: String(player.distance))
         distanceLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 40)
-        distanceLabel.fontColor = UIColor.white
+        distanceLabel.fontColor = UIColor(named: "TextColor")!
         distanceLabel.zPosition = 2
         distanceLabel.fontSize = 32
         addChild(distanceLabel)
         
         // create moon object
-        moonObject = SKSpriteNode(color: UIColor(named: "moonColor")!, size: CGSize(width: 70, height: 70))
+        moonObject = SKSpriteNode(color: UIColor(named: "MoonColor")!, size: CGSize(width: 70, height: 70))
         moonObject.position = CGPoint(x: frame.midX + 100, y: frame.maxY - 180)
         moonObject.zPosition = -5
         addChild(moonObject)
@@ -66,6 +70,24 @@ class GameScene: SKScene {
         // add hint square
         hint.zPosition = 2
         addChild(hint)
+        
+        gameoverLabel.position = CGPoint(x: frame.midX, y: frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2)
+        gameoverLabel.fontColor = UIColor(named: "TextColor")!
+        gameoverLabel.zPosition = 2
+        gameoverLabel.fontSize = 32
+        addChild(gameoverLabel)
+        
+        
+        tapToBackLabel.position = CGPoint(x: frame.midX, y: gameoverLabel.position.y - 30)
+        tapToBackLabel.fontColor = UIColor(named: "TextColor")!
+        tapToBackLabel.zPosition = 2
+        tapToBackLabel.fontSize = 16
+        addChild(tapToBackLabel)
+        
+        tapToBackLabel.run(SKAction.repeatForever(SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.8), SKAction.scale(by: 0.9, duration: 0.8)])))
+        
+        gameoverLabel.isHidden = true
+        tapToBackLabel.isHidden = true
         
         // add gesture recognizer
         let swipeUp = UISwipeGestureRecognizer()
@@ -101,24 +123,44 @@ class GameScene: SKScene {
         else{
             player.body.run(SKAction.rotate(byAngle: CGFloat(-CGFloat.pi/2), duration: 0.15), withKey: "RotateCube")
         }
+        // present start scene
+        if gameover{
+            let scene = StartScene()
+            scene.backgroundColor = UIColor(named: "BackgroundColor")!
+            scene.size = frame.size
+            scene.gameAreaView = gameAreaView
+            scene.backgroundObjects = backgroundObjects
+            scene.stars = stars
+            scene.firstRun = false
+            gameAreaView.presentScene(scene)
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        if !resourcesLoaded{
+            for star in stars{
+                addChild(star)
+            }
+            for obj in backgroundObjects{
+                addChild(obj)
+            }
+            resourcesLoaded = true
+        }
         // set hint position
         hint.isHidden = false
         let midH = frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2
         switch obstacle.orientation {
         case .bottom:
-            hint.position = CGPoint(x: frame.maxX - 10, y: (ground.position.y + 0.5*ground.size.height) + 10)
+            hint.position = CGPoint(x: frame.size.width - 10, y: (ground.position.y + 0.5*ground.size.height) + 10)
         case .center:
-            hint.position = CGPoint(x: frame.maxX - 10, y: midH)
+            hint.position = CGPoint(x: frame.size.width - 10, y: midH)
         case .top:
-            hint.position = CGPoint(x: frame.maxX - 10, y: frame.maxY - 10)
+            hint.position = CGPoint(x: frame.size.width - 10, y: frame.maxY - 10)
         default:
-            hint.position = CGPoint(x: frame.maxX - 10, y: ground.position.y + 100)
+            hint.position = CGPoint(x: frame.size.width - 10, y: ground.position.y + 100)
         }
         if obstacle.body.frame.minX <= frame.midX{
             hint.isHidden = true
@@ -139,10 +181,11 @@ class GameScene: SKScene {
             if backgroundSpeed > 0{
                 backgroundSpeed -= dx2
             }
+            gameOver()
         }
+
         else{
             controlPlayer()
-            
             // increase speed every 10 meters
             obstacle.speed = CGFloat(Int(player.distance / 10))/5 + 4
             backgroundSpeed = CGFloat(Int(player.distance / 10)/2)/5 + 1
@@ -198,6 +241,15 @@ class GameScene: SKScene {
         default:
             player.direction = .center
         }
+    }
+    func gameOver(){
+        gameover = true
+        if UserDefaults.standard.float(forKey: "Highscore") < player.distance{
+            UserDefaults.standard.set(player.distance, forKey: "Highscore")
+        }
+        gameoverLabel.isHidden = false
+        tapToBackLabel.isHidden = false
+
     }
     func createRandomBackroundObjects() -> [SKSpriteNode] {
         let count = Int.random(in: 2..<5)

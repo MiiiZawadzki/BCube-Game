@@ -15,15 +15,13 @@ class GameViewController: UIViewController {
         scene2.size = view.bounds.size
         (view as! SKView).presentScene(scene2)
         
-        
-        // create new game scene
-        let scene = GameScene()
+
+        // create new start scene
+        let scene = StartScene()
         scene.backgroundColor = UIColor(named: "BackgroundColor")!
-        // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
         scene.size = gameAreaView.bounds.size
+        scene.gameAreaView = gameAreaView
         gameAreaView.presentScene(scene)
-            
 
         gameAreaView.ignoresSiblingOrder = true
 
