@@ -20,10 +20,6 @@ class GameScene: SKScene {
     
     var hint = SKSpriteNode(color: UIColor(named: "HintColor")!, size: CGSize(width: 5, height: 5))
     override func didMove(to view: SKView) {        
-        // set world physics
-        physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
-        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
 
         // create player object
         let cube = SKSpriteNode(color: UIColor(named: "PlayerColor")!, size: CGSize(width: frame.width/10, height: frame.width/10))
@@ -38,6 +34,13 @@ class GameScene: SKScene {
         cube.physicsBody?.allowsRotation = false
         player = Player(body: cube)
         addChild(player.body)
+        
+        // set world physics
+        physicsWorld.contactDelegate = self
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
+        var newRect = CGRect(x: frame.minX - player.body.size.width-2, y: frame.minY, width: frame.width+player.body.size.width+2, height: frame.height)
+        physicsBody = SKPhysicsBody(edgeLoopFrom: newRect)
+
         
         // create ground object
         ground = SKSpriteNode(color: UIColor(named: "GroundColor")!, size: CGSize(width: frame.width, height: cube.size.height/2))
@@ -197,7 +200,6 @@ class GameScene: SKScene {
         
         // move obstacle
         obstacle.body.position.x -= obstacle.speed
-        
         if backgroundObjects.count == 0{
             backgroundObjects = createRandomBackroundObjects()
         }
@@ -275,7 +277,7 @@ class GameScene: SKScene {
     func createRandomObstacle() -> Obstacle {
         let orientation = Int.random(in: 0..<3)
         let maxHeight = frame.maxY - ground.position.y - 2*player.body.size.height
-        let height = CGFloat.random(in: player.body.size.width..<maxHeight)
+        let height = CGFloat.random(in: player.body.size.width*2..<maxHeight)
         let width = CGFloat.random(in: player.body.size.width*1.5..<player.body.size.width*3)
         let object = SKSpriteNode(color: UIColor(named: "ObstacleColor")!, size: CGSize(width: width, height: height))
 
@@ -297,6 +299,7 @@ class GameScene: SKScene {
         }
         obstacleObject.body.physicsBody = SKPhysicsBody(rectangleOf: obstacleObject.body.size)
         obstacleObject.body.physicsBody?.isDynamic = false
+        obstacleObject.body.physicsBody?.mass = 2*player.body.physicsBody!.mass
         obstacleObject.body.physicsBody?.allowsRotation = false
         addChild(obstacleObject.body)
         return obstacleObject
