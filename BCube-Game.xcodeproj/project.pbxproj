@@ -16,6 +16,7 @@
 		9077A10C25A5F7A200931E9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9077A10B25A5F7A200931E9C /* Assets.xcassets */; };
 		9079225925C31A95000D25AE /* StartScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9079225825C31A95000D25AE /* StartScene.swift */; };
 		90C3723525C1AE29006D09EC /* EmptyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C3723425C1AE29006D09EC /* EmptyScene.swift */; };
+		90EECB3B25C9704900434199 /* CustomizeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EECB3A25C9704900434199 /* CustomizeScene.swift */; };
 		90FCD37225B2416900B5377D /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FCD37125B2416900B5377D /* Obstacle.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		9077A10D25A5F7A200931E9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9079225825C31A95000D25AE /* StartScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScene.swift; sourceTree = "<group>"; };
 		90C3723425C1AE29006D09EC /* EmptyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyScene.swift; sourceTree = "<group>"; };
+		90EECB3A25C9704900434199 /* CustomizeScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeScene.swift; sourceTree = "<group>"; };
 		90FCD37125B2416900B5377D /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -51,6 +53,7 @@
 				9077A10425A5F7A000931E9C /* GameScene.swift */,
 				90C3723425C1AE29006D09EC /* EmptyScene.swift */,
 				9079225825C31A95000D25AE /* StartScene.swift */,
+				90EECB3A25C9704900434199 /* CustomizeScene.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90EECB3B25C9704900434199 /* CustomizeScene.swift in Sources */,
 				900F3E4E25AB9398001BECEF /* Player.swift in Sources */,
 				9079225925C31A95000D25AE /* StartScene.swift in Sources */,
 				9077A10525A5F7A000931E9C /* GameScene.swift in Sources */,

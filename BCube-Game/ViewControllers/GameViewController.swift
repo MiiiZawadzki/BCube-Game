@@ -19,6 +19,13 @@ class GameViewController: UIViewController {
         // create new start scene
         let scene = StartScene()
         scene.backgroundColor = UIColor(named: "BackgroundColor")!
+        if UserDefaults.standard.array(forKey: "PlayerColor") != nil{
+            let color = UserDefaults.standard.array(forKey: "PlayerColor")!
+            scene.playerColor = UIColor(red: color[0] as! CGFloat, green: color[1] as! CGFloat, blue: color[2] as! CGFloat, alpha: 1.0)
+        }
+        else{
+            scene.playerColor = UIColor(named: "PlayerColor")!
+        }
         scene.size = gameAreaView.bounds.size
         scene.gameAreaView = gameAreaView
         gameAreaView.presentScene(scene)

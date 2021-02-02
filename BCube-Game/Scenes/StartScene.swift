@@ -8,12 +8,13 @@ class StartScene: SKScene {
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
     var player: Player!
+    var playerColor: UIColor!
     var resourcesLoaded = false
-    var sceneSwitch = false
+    var gameSceneSwitch = false
+    var customizeSceneSwitch = false
     var firstRun = true
     override func didMove(to view: SKView) {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-
         // create player object
         let cube = SKSpriteNode(color: UIColor(named: "PlayerColor")!, size: CGSize(width: frame.width/10, height: frame.width/10))
         cube.position = CGPoint(x: frame.midX, y: frame.midY + cube.size.height*4)
@@ -61,8 +62,8 @@ class StartScene: SKScene {
         distanceLabel.fontSize = 24
         addChild(distanceLabel)
         
-        // create tap to play label
-        let playLabel = SKLabelNode(text: "Tap to play!")
+        // create swipe up to play label
+        let playLabel = SKLabelNode(text: "Swipe up to play!")
         playLabel.position = CGPoint(x: frame.midX, y: frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2)
         playLabel.fontColor = UIColor(named: "TextColor")!
         playLabel.zPosition = 2
@@ -70,19 +71,72 @@ class StartScene: SKScene {
         addChild(playLabel)
         playLabel.run(SKAction.repeatForever(SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.8), SKAction.scale(by: 0.9, duration: 0.8)])))
         
+        // create swpie down to customize
+        let customizeLabel = SKLabelNode(text: "Swipe down to customize")
+        customizeLabel.position = CGPoint(x: frame.midX, y: frame.minY + (ground.position.y + 0.5*ground.size.height) / 2)
+        customizeLabel.fontColor = UIColor(named: "TextColor")!
+        customizeLabel.zPosition = 2
+        customizeLabel.fontSize = 24
+        addChild(customizeLabel)
+
+        
+        // add gesture recognizer
+        let swipeUp = UISwipeGestureRecognizer()
+        let swipeDown = UISwipeGestureRecognizer()
+        
+        swipeUp.direction = .up
+        swipeDown.direction = .down
+        
+        view.addGestureRecognizer(swipeUp)
+        view.addGestureRecognizer(swipeDown)
+        
+        swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
+        swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
+        
+    }
+    @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
+        if sender.state == .recognized {
+            switch sender.direction {
+            case .up:
+                player.body.physicsBody = nil
+                player.body.run(SKAction.moveTo(y: frame.midY + player.body.size.height*4, duration: 0.15))
+                gameSceneSwitch = true
+            case .down:
+                ground.physicsBody?.isDynamic = true
+                customizeSceneSwitch = true
+            default:
+                print("down")
+            }
+        }
     }
     override func update(_ currentTime: TimeInterval) {
-        if sceneSwitch && player.body.position.y >= frame.midY + player.body.size.height*4 - 1{
+        if let color = playerColor{
+            player.body.color = color
+        }
+        if gameSceneSwitch && player.body.position.y >= frame.midY + player.body.size.height*4 - 1{
             let scene = GameScene()
             scene.backgroundColor = UIColor(named: "BackgroundColor")!
             scene.size = frame.size
             scene.stars = stars
             scene.gameAreaView = gameAreaView
+            scene.playerColor = playerColor
             scene.backgroundObjects = backgroundObjects
             gameAreaView.presentScene(scene)
-            sceneSwitch = false
+            gameSceneSwitch = false
+        }
+        if customizeSceneSwitch && player.body.position.y <= frame.midY - player.body.size.height*4 + 1{
+            let scene = CustomizeScene()
+            scene.size = frame.size
+            scene.backgroundColor = UIColor(named: "BackgroundColor")!
+            scene.playerColor = playerColor
+            scene.gameAreaView = gameAreaView
+            scene.stars = stars
+            scene.backgroundObjects = backgroundObjects
+            gameAreaView.presentScene(scene)
+            customizeSceneSwitch = false
         }
         if !resourcesLoaded && !firstRun{
+            player.body.color = playerColor
             for star in stars{
                 addChild(star)
             }
@@ -98,16 +152,6 @@ class StartScene: SKScene {
             }
         }
     }
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        player.body.physicsBody = nil
-        player.body.run(SKAction.moveTo(y: frame.midY + player.body.size.height*4, duration: 0.15))
-        sceneSwitch = true
-        
-        
-    }
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-    }
     func createRandomStars() -> [SKSpriteNode]{
         var result = [SKSpriteNode]()
         for _ in 0..<Int.random(in: 80..<90) {
@@ -120,21 +164,50 @@ class StartScene: SKScene {
         return result
     }
     func createRandomBackroundObjects() -> [SKSpriteNode] {
-        let count = Int.random(in: 2..<5)
-        var colors = [UIColor(named: "BackgroundObject1")!, UIColor(named: "BackgroundObject2")!, UIColor(named: "BackgroundObject3")!, UIColor(named: "BackgroundObject4")!, UIColor(named: "BackgroundObject5")!]
-        let dx = frame.maxX/CGFloat(count)
-        var min = frame.minX + 100
+        // result array
         var backgroundObjects = [SKSpriteNode]()
-        for _ in 1..<count+1{
+        
+        // number of background objects
+        let count = Int.random(in: 2..<5)
+        
+        // array from which the colors are drawn
+        var colors = [UIColor(named: "BackgroundObject1")!, UIColor(named: "BackgroundObject2")!, UIColor(named: "BackgroundObject3")!, UIColor(named: "BackgroundObject4")!, UIColor(named: "BackgroundObject5")!]
+        
+        // divide screen into count parts
+        let dx = frame.maxX/CGFloat(count)
+        
+        // minimal x-position
+        var min = frame.minX + 100
+        
+        // create background objects
+        for _ in 0..<count{
+            
+            // choose backround object height and width
             let height = CGFloat.random(in: player.body.size.width..<player.body.size.width*5)
             let width = CGFloat.random(in: player.body.size.width*1.5..<player.body.size.width*4)
+            
+            // choose color index
             let colorIndex = Int.random(in: 0..<colors.count)
+            
+            // create background object
             let backgroundRectangle = SKSpriteNode(color: colors[colorIndex], size: CGSize(width: width, height: height))
+            
+            // remove used color
             colors.remove(at: colorIndex)
+            
+            // set position of the background object on the screen
             backgroundRectangle.position = CGPoint(x: CGFloat.random(in: min..<min + dx), y: ground.position.y + 0.5*(backgroundRectangle.size.height + ground.size.height))
+            
+            // increase minmal x-position
             min += dx
+            
+            // set z-position
             backgroundRectangle.zPosition = -1
+            
+            // set physics
             backgroundRectangle.physicsBody?.isDynamic = false
+            
+            // add background object
             backgroundObjects.append(backgroundRectangle)
             addChild(backgroundRectangle)
         }

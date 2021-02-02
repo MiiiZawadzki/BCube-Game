@@ -12,7 +12,7 @@ class GameScene: SKScene {
     var backgroundSpeed:CGFloat = 1.0
     var resourcesLoaded = false
     var gameover = false
-    
+    var playerColor: UIColor!
     var gameAreaView: SKView!
     
     var gameoverLabel = SKLabelNode(text: "GAME OVER!")
@@ -25,7 +25,7 @@ class GameScene: SKScene {
         let cube = SKSpriteNode(color: UIColor(named: "PlayerColor")!, size: CGSize(width: frame.width/10, height: frame.width/10))
         cube.position = CGPoint(x: frame.midX, y: frame.midY + cube.size.height*4)
         cube.name = "cube"
-        
+
         // create cube physics
         cube.physicsBody = SKPhysicsBody(rectangleOf: cube.size)
         cube.physicsBody?.restitution = 0.0
@@ -33,12 +33,12 @@ class GameScene: SKScene {
         cube.physicsBody!.contactTestBitMask = cube.physicsBody!.collisionBitMask
         cube.physicsBody?.allowsRotation = false
         player = Player(body: cube)
-        addChild(player.body)
-        
+//        addChild(player.body)
+
         // set world physics
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
-        var newRect = CGRect(x: frame.minX - player.body.size.width-2, y: frame.minY, width: frame.width+player.body.size.width+2, height: frame.height)
+        let newRect = CGRect(x: frame.minX - player.body.size.width-2, y: frame.minY, width: frame.width+player.body.size.width+2, height: frame.height)
         physicsBody = SKPhysicsBody(edgeLoopFrom: newRect)
 
         
@@ -135,6 +135,7 @@ class GameScene: SKScene {
             scene.backgroundObjects = backgroundObjects
             scene.stars = stars
             scene.firstRun = false
+            scene.playerColor = playerColor
             gameAreaView.presentScene(scene)
         }
     }
@@ -144,6 +145,8 @@ class GameScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         if !resourcesLoaded{
+            player.body.color = playerColor!
+            addChild(player.body)
             for star in stars{
                 addChild(star)
             }
@@ -193,20 +196,26 @@ class GameScene: SKScene {
             obstacle.speed = CGFloat(Int(player.distance / 10))/5 + 4
             backgroundSpeed = CGFloat(Int(player.distance / 10)/2)/5 + 1
         }
-        if obstacle.body.position.x <= frame.minX - obstacle.body.size.width{
+        
+        // check if obstacle left the screen
+        if obstacle.body.frame.maxX <= frame.minX{
             obstacle.body.removeFromParent()
             obstacle = createRandomObstacle()
         }
         
         // move obstacle
         obstacle.body.position.x -= obstacle.speed
+        
+        // check if all background objects left the screen
         if backgroundObjects.count == 0{
             backgroundObjects = createRandomBackroundObjects()
         }
         
-        // move background objects
         for obj in backgroundObjects{
+            // move background objects
             obj.position.x -= backgroundSpeed
+            
+            // check if background object left the screen
             if obj.frame.maxX <= frame.minX{
                 // delete object
                 obj.removeFromParent()
@@ -228,6 +237,7 @@ class GameScene: SKScene {
             player.body.position.x = frame.midX
             player.distance += 0.05
         }
+        // speed up to go to center position
         else{
             player.body.position.x += 2
             if !player.collideWithObstacle{
@@ -254,36 +264,73 @@ class GameScene: SKScene {
 
     }
     func createRandomBackroundObjects() -> [SKSpriteNode] {
-        let count = Int.random(in: 2..<5)
-        var colors = [UIColor(named: "BackgroundObject1")!, UIColor(named: "BackgroundObject2")!, UIColor(named: "BackgroundObject3")!, UIColor(named: "BackgroundObject4")!, UIColor(named: "BackgroundObject5")!]
-        let dx = frame.maxX/CGFloat(count)
-        var min = frame.minX + 100
+        // result array
         var backgroundObjects = [SKSpriteNode]()
-        for _ in 1..<count+1{
+        
+        // number of background objects
+        let count = Int.random(in: 2..<5)
+        
+        // array from which the colors are drawn
+        var colors = [UIColor(named: "BackgroundObject1")!, UIColor(named: "BackgroundObject2")!, UIColor(named: "BackgroundObject3")!, UIColor(named: "BackgroundObject4")!, UIColor(named: "BackgroundObject5")!]
+        
+        // divide screen into count parts
+        let dx = frame.maxX/CGFloat(count)
+        
+        // minimal x-position
+        var min = frame.minX + 100
+        
+        // create background objects
+        for _ in 0..<count{
+            
+            // choose backround object height and width
             let height = CGFloat.random(in: player.body.size.width..<player.body.size.width*5)
             let width = CGFloat.random(in: player.body.size.width*1.5..<player.body.size.width*4)
+            
+            // choose color index
             let colorIndex = Int.random(in: 0..<colors.count)
+            
+            // create background object
             let backgroundRectangle = SKSpriteNode(color: colors[colorIndex], size: CGSize(width: width, height: height))
+            
+            // remove used color
             colors.remove(at: colorIndex)
+            
+            // set position of the background object on the screen
             backgroundRectangle.position = CGPoint(x: frame.maxX + CGFloat.random(in: min..<min + dx), y: ground.position.y + 0.5*(backgroundRectangle.size.height + ground.size.height))
+            
+            // increase minmal x-position
             min += dx
+            
+            // set z-position
             backgroundRectangle.zPosition = -1
+            
+            // set physics
             backgroundRectangle.physicsBody?.isDynamic = false
+            
+            // add background object
             backgroundObjects.append(backgroundRectangle)
             addChild(backgroundRectangle)
         }
         return backgroundObjects
     }
     func createRandomObstacle() -> Obstacle {
+        // choose orientation on the screen (bottom, top, center)
         let orientation = Int.random(in: 0..<3)
+        
+        // choose obstacle height and width
         let maxHeight = frame.maxY - ground.position.y - 2*player.body.size.height
         let height = CGFloat.random(in: player.body.size.width*2..<maxHeight)
         let width = CGFloat.random(in: player.body.size.width*1.5..<player.body.size.width*3)
+        
+        // create obstacle
         let object = SKSpriteNode(color: UIColor(named: "ObstacleColor")!, size: CGSize(width: width, height: height))
-
         let obstacleObject = Obstacle(body: object)
-        obstacleObject.body.name = "rectangle"
+        
+        // set obstacle properties
+        obstacleObject.body.name = "obstacle"
         obstacleObject.body.zPosition = 1
+        
+        // set orientation
         if orientation == 0{
             obstacleObject.orientation = .bottom
             obstacleObject.body.position = CGPoint(x: frame.maxX + 100, y: ground.position.y + 0.5*(obstacleObject.body.size.height + ground.size.height))
@@ -297,15 +344,21 @@ class GameScene: SKScene {
             obstacleObject.body.size.height = player.body.size.height*CGFloat.random(in: 2...5)
             obstacleObject.body.position = CGPoint(x: frame.maxX + 100, y: ground.position.y + (frame.maxY - ground.position.y)/2)
         }
+        
+        // set physics
         obstacleObject.body.physicsBody = SKPhysicsBody(rectangleOf: obstacleObject.body.size)
         obstacleObject.body.physicsBody?.isDynamic = false
-        obstacleObject.body.physicsBody?.mass = 2*player.body.physicsBody!.mass
         obstacleObject.body.physicsBody?.allowsRotation = false
+        
+        // add obstacle
         addChild(obstacleObject.body)
         return obstacleObject
     }
     func createRandomStars() -> [SKSpriteNode]{
+        // result array
         var result = [SKSpriteNode]()
+        
+        // create stars
         for _ in 0..<Int.random(in: 80..<90) {
             let star = SKSpriteNode(color: UIColor(named: "StarColor")!, size: CGSize(width: 1, height: 1))
             star.position = CGPoint(x: CGFloat.random(in: frame.minX..<frame.maxX), y: CGFloat.random(in: (ground.position.y+ground.size.height)..<frame.maxY))
@@ -319,7 +372,7 @@ class GameScene: SKScene {
         if object.name == "ground" {
             player.canJump = true
         }
-        if object.name == "rectangle" {
+        if object.name == "obstacle" {
             if player.canJump{
                 player.collideWithObstacle = (abs(player.body.frame.maxX - object.frame.minX)<4)
             }
@@ -327,7 +380,7 @@ class GameScene: SKScene {
         }
     }
     func cubeStopCollisionBetween(cube: SKNode, object: SKNode) {
-        if object.name == "rectangle" {
+        if object.name == "obstacle" {
             player.collideWithObstacle = false
         }
     }
