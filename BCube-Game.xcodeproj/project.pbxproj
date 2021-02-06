@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		900F3E4E25AB9398001BECEF /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900F3E4D25AB9398001BECEF /* Player.swift */; };
+		9038677925CEC75E00625C56 /* mainMusic.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9038677725CEC75E00625C56 /* mainMusic.wav */; };
+		9038677A25CEC75E00625C56 /* introMusic.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9038677825CEC75E00625C56 /* introMusic.wav */; };
 		906793E825A61D360096D4D3 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 906793E725A61D360096D4D3 /* Launch Screen.storyboard */; };
 		9077A0FF25A5F7A000931E9C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9077A0FE25A5F7A000931E9C /* AppDelegate.swift */; };
 		9077A10525A5F7A000931E9C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9077A10425A5F7A000931E9C /* GameScene.swift */; };
@@ -22,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		900F3E4D25AB9398001BECEF /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		9038677725CEC75E00625C56 /* mainMusic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = mainMusic.wav; sourceTree = "<group>"; };
+		9038677825CEC75E00625C56 /* introMusic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = introMusic.wav; sourceTree = "<group>"; };
 		906793E725A61D360096D4D3 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9077A0FB25A5F7A000931E9C /* BCube-Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BCube-Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9077A0FE25A5F7A000931E9C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -105,6 +109,8 @@
 		9077A0FD25A5F7A000931E9C /* BCube-Game */ = {
 			isa = PBXGroup;
 			children = (
+				9038677825CEC75E00625C56 /* introMusic.wav */,
+				9038677725CEC75E00625C56 /* mainMusic.wav */,
 				9019A9A125AC5D5300CE14F2 /* Templates */,
 				9019A9A025AC5D1B00CE14F2 /* Assets */,
 				9019A99F25AC5CD100CE14F2 /* ViewControllers */,
@@ -171,9 +177,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9038677A25CEC75E00625C56 /* introMusic.wav in Resources */,
 				906793E825A61D360096D4D3 /* Launch Screen.storyboard in Resources */,
 				9077A10A25A5F7A000931E9C /* Main.storyboard in Resources */,
 				9077A10C25A5F7A200931E9C /* Assets.xcassets in Resources */,
+				9038677925CEC75E00625C56 /* mainMusic.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,7 @@ class CustomizeScene: SKScene, UIColorPickerViewControllerDelegate {
     var backgroundObjects: [SKSpriteNode]!
     var stars: [SKSpriteNode]!
     var resourcesLoaded = false
+    var backgroundMusic: SKAudioNode!
     var redSlider: UISlider!
     var greenSlider: UISlider!
     var blueSlider: UISlider!
@@ -71,6 +72,15 @@ class CustomizeScene: SKScene, UIColorPickerViewControllerDelegate {
         view.addSubview(redSlider)
         view.addSubview(greenSlider)
         view.addSubview(blueSlider)
+        
+        if let musicURL = Bundle.main.url(forResource: "introMusic", withExtension: "wav") {
+            backgroundMusic = SKAudioNode(url: musicURL)
+            addChild(backgroundMusic)
+            backgroundMusic.run(SKAction.stop())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+            backgroundMusic.run(SKAction.play())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 2.0))
+        }
     }
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {
@@ -78,7 +88,7 @@ class CustomizeScene: SKScene, UIColorPickerViewControllerDelegate {
             view?.subviews.forEach { $0.removeFromSuperview() }
             let scene = StartScene()
             scene.backgroundColor = UIColor(named: "BackgroundColor")!
-            scene.size = gameAreaView.bounds.size
+            scene.size = frame.size
             scene.backgroundObjects = backgroundObjects
             scene.stars = stars
             scene.playerColor = playerColor

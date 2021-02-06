@@ -9,6 +9,7 @@ class GameScene: SKScene {
     var moonObject: SKSpriteNode!
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
+    var backgroundMusic: SKAudioNode!
     var backgroundSpeed:CGFloat = 1.0
     var resourcesLoaded = false
     var gameover = false
@@ -104,6 +105,15 @@ class GameScene: SKScene {
         
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
+        
+        if let musicURL = Bundle.main.url(forResource: "mainMusic", withExtension: "wav") {
+            backgroundMusic = SKAudioNode(url: musicURL)
+            addChild(backgroundMusic)
+            backgroundMusic.run(SKAction.stop())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+            backgroundMusic.run(SKAction.play())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 0.1))
+        }
     }
     
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){

@@ -33,8 +33,8 @@ class GameViewController: UIViewController {
         gameAreaView.ignoresSiblingOrder = true
 
         gameAreaView.showsFPS = true
-        gameAreaView.showsNodeCount = true
-        gameAreaView.showsPhysics = true
+//        gameAreaView.showsNodeCount = true
+//        gameAreaView.showsPhysics = true
     }
     override var prefersStatusBarHidden: Bool {
         return true

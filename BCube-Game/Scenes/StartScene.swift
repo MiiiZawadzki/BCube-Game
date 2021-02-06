@@ -7,6 +7,7 @@ class StartScene: SKScene {
     var moonObject: SKSpriteNode!
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
+    var backgroundMusic: SKAudioNode!
     var player: Player!
     var playerColor: UIColor!
     var resourcesLoaded = false
@@ -93,15 +94,27 @@ class StartScene: SKScene {
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
         
+        if let musicURL = Bundle.main.url(forResource: "introMusic", withExtension: "wav") {
+            backgroundMusic = SKAudioNode(url: musicURL)
+            addChild(backgroundMusic)
+            backgroundMusic.run(SKAction.stop())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+            backgroundMusic.run(SKAction.play())
+            backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 2.0))
+        }
+        
+        
     }
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {
             switch sender.direction {
             case .up:
+                backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
                 player.body.physicsBody = nil
                 player.body.run(SKAction.moveTo(y: frame.midY + player.body.size.height*4, duration: 0.15))
                 gameSceneSwitch = true
             case .down:
+                backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
                 ground.physicsBody?.isDynamic = true
                 customizeSceneSwitch = true
             default:
