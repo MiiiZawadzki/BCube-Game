@@ -10,15 +10,17 @@ class GameScene: SKScene {
     var stars: [SKSpriteNode]!
     var backgroundObjects: [SKSpriteNode]!
     var backgroundMusic: SKAudioNode!
+    var powerUp: SKSpriteNode!
     var backgroundSpeed:CGFloat = 1.0
     var resourcesLoaded = false
     var gameover = false
     var playerColor: UIColor!
     var gameAreaView: SKView!
-    
+    var powerUpCanSpawn = false
+    var powerUpPos: CGFloat = 0
     var gameoverLabel = SKLabelNode(text: "GAME OVER!")
     var tapToBackLabel = SKLabelNode(text: "tap to go back to menu")
-    
+    var musicSwitch = true
     var hint = SKSpriteNode(color: UIColor(named: "HintColor")!, size: CGSize(width: 5, height: 5))
     override func didMove(to view: SKView) {        
 
@@ -106,14 +108,10 @@ class GameScene: SKScene {
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
         
-        if let musicURL = Bundle.main.url(forResource: "mainMusic", withExtension: "wav") {
-            backgroundMusic = SKAudioNode(url: musicURL)
-            addChild(backgroundMusic)
-            backgroundMusic.run(SKAction.stop())
-            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
-            backgroundMusic.run(SKAction.play())
-            backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 0.1))
-        }
+        powerUp = SKSpriteNode(color: UIColor.red, size: CGSize(width: 10, height: 10))
+        powerUp.physicsBody = SKPhysicsBody(rectangleOf: powerUp.size)
+        powerUp.physicsBody?.isDynamic = false
+        powerUp.name = "powerUp"
     }
     
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
@@ -145,6 +143,7 @@ class GameScene: SKScene {
             scene.backgroundObjects = backgroundObjects
             scene.stars = stars
             scene.firstRun = false
+            scene.musicSwitch = musicSwitch
             scene.playerColor = playerColor
             gameAreaView.presentScene(scene)
         }
@@ -164,6 +163,16 @@ class GameScene: SKScene {
                 addChild(obj)
             }
             resourcesLoaded = true
+            if musicSwitch{
+                if let musicURL = Bundle.main.url(forResource: "mainMusic", withExtension: "wav") {
+                    backgroundMusic = SKAudioNode(url: musicURL)
+                    addChild(backgroundMusic)
+                    backgroundMusic.run(SKAction.stop())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+                    backgroundMusic.run(SKAction.play())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 0.1))
+                }
+            }
         }
         // set hint position
         hint.isHidden = false
@@ -216,10 +225,37 @@ class GameScene: SKScene {
         // move obstacle
         obstacle.body.position.x -= obstacle.speed
         
-        // check if all background objects left the screen
+        if powerUpCanSpawn{
+            powerUp.removeFromParent()
+            switch obstacle.orientation {
+            case .bottom:
+                powerUpPos = frame.maxY - (frame.maxY - obstacle.body.frame.maxY) / 2
+            case .center:
+                let i = Int.random(in: 0...1)
+                if i == 1{
+                    powerUpPos = frame.maxY - (frame.maxY - obstacle.body.frame.maxY) / 2
+                }
+                else{
+                    powerUpPos = ground.frame.maxY + (obstacle.body.frame.minY - ground.frame.maxY) / 2
+                }
+            case .top:
+                powerUpPos = ground.frame.maxY + (obstacle.body.frame.minY - ground.frame.maxY) / 2
+            default:
+                powerUpPos = CGFloat.random(in: frame.maxY...obstacle.body.frame.maxY)
+            }
+            powerUp.position = CGPoint(x: obstacle.body.position.x, y: powerUpPos)
+            addChild(powerUp)
+            powerUpCanSpawn = false
+        }
+        
+        powerUp.position.x -= obstacle.speed
+
+        
+                // check if all background objects left the screen
         if backgroundObjects.count == 0{
             backgroundObjects = createRandomBackroundObjects()
         }
+        
         
         for obj in backgroundObjects{
             // move background objects
@@ -271,6 +307,9 @@ class GameScene: SKScene {
         }
         gameoverLabel.isHidden = false
         tapToBackLabel.isHidden = false
+        if musicSwitch{
+            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 1.0))
+        }
 
     }
     func createRandomBackroundObjects() -> [SKSpriteNode] {
@@ -362,6 +401,7 @@ class GameScene: SKScene {
         
         // add obstacle
         addChild(obstacleObject.body)
+        powerUpCanSpawn = true
         return obstacleObject
     }
     func createRandomStars() -> [SKSpriteNode]{
@@ -387,6 +427,10 @@ class GameScene: SKScene {
                 player.collideWithObstacle = (abs(player.body.frame.maxX - object.frame.minX)<4)
             }
             player.canJump = true
+        }
+        if object.name == "powerUp" {
+            print("PowerUp!")
+            powerUp.removeFromParent()
         }
     }
     func cubeStopCollisionBetween(cube: SKNode, object: SKNode) {

@@ -14,6 +14,7 @@ class StartScene: SKScene {
     var gameSceneSwitch = false
     var customizeSceneSwitch = false
     var firstRun = true
+    var musicSwitch = true
     override func didMove(to view: SKView) {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         // create player object
@@ -47,6 +48,17 @@ class StartScene: SKScene {
             
             // generate background objects
             backgroundObjects = createRandomBackroundObjects()
+            
+            if musicSwitch{
+                if let musicURL = Bundle.main.url(forResource: "introMusic", withExtension: "wav") {
+                    backgroundMusic = SKAudioNode(url: musicURL)
+                    addChild(backgroundMusic)
+                    backgroundMusic.run(SKAction.stop())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+                    backgroundMusic.run(SKAction.play())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 2.0))
+                }
+            }
         }
         
         // create moon object
@@ -94,27 +106,22 @@ class StartScene: SKScene {
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
         
-        if let musicURL = Bundle.main.url(forResource: "introMusic", withExtension: "wav") {
-            backgroundMusic = SKAudioNode(url: musicURL)
-            addChild(backgroundMusic)
-            backgroundMusic.run(SKAction.stop())
-            backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
-            backgroundMusic.run(SKAction.play())
-            backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 2.0))
-        }
-        
         
     }
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {
             switch sender.direction {
             case .up:
-                backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
+                if musicSwitch{
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
+                }
                 player.body.physicsBody = nil
                 player.body.run(SKAction.moveTo(y: frame.midY + player.body.size.height*4, duration: 0.15))
                 gameSceneSwitch = true
             case .down:
-                backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
+                if musicSwitch{
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0.5))
+                }
                 ground.physicsBody?.isDynamic = true
                 customizeSceneSwitch = true
             default:
@@ -134,6 +141,7 @@ class StartScene: SKScene {
             scene.gameAreaView = gameAreaView
             scene.playerColor = playerColor
             scene.backgroundObjects = backgroundObjects
+            scene.musicSwitch = musicSwitch
             gameAreaView.presentScene(scene)
             gameSceneSwitch = false
         }
@@ -144,6 +152,7 @@ class StartScene: SKScene {
             scene.playerColor = playerColor
             scene.gameAreaView = gameAreaView
             scene.stars = stars
+            scene.musicSwitch = musicSwitch
             scene.backgroundObjects = backgroundObjects
             gameAreaView.presentScene(scene)
             customizeSceneSwitch = false
@@ -156,6 +165,16 @@ class StartScene: SKScene {
             for obj in backgroundObjects{
                 addChild(obj)
             }
+            if musicSwitch{
+                if let musicURL = Bundle.main.url(forResource: "introMusic", withExtension: "wav") {
+                    backgroundMusic = SKAudioNode(url: musicURL)
+                    addChild(backgroundMusic)
+                    backgroundMusic.run(SKAction.stop())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.0, duration: 0))
+                    backgroundMusic.run(SKAction.play())
+                    backgroundMusic.run(SKAction.changeVolume(to: 0.7, duration: 2.0))
+                }
+            }
             resourcesLoaded = true
         }
         for star in stars{
@@ -164,6 +183,7 @@ class StartScene: SKScene {
                 star.position.x = frame.maxX + 2
             }
         }
+
     }
     func createRandomStars() -> [SKSpriteNode]{
         var result = [SKSpriteNode]()
