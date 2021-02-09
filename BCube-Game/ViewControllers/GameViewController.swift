@@ -19,6 +19,7 @@ class GameViewController: UIViewController {
         // create new start scene
         let scene = StartScene()
         scene.backgroundColor = UIColor(named: "BackgroundColor")!
+        // if user set the player color use this color
         if UserDefaults.standard.array(forKey: "PlayerColor") != nil{
             let color = UserDefaults.standard.array(forKey: "PlayerColor")!
             scene.playerColor = UIColor(red: color[0] as! CGFloat, green: color[1] as! CGFloat, blue: color[2] as! CGFloat, alpha: 1.0)
@@ -31,11 +32,9 @@ class GameViewController: UIViewController {
         gameAreaView.presentScene(scene)
 
         gameAreaView.ignoresSiblingOrder = true
-
-        gameAreaView.showsFPS = true
-//        gameAreaView.showsNodeCount = true
-        gameAreaView.showsPhysics = true
     }
+    
+    // hide status bar
     override var prefersStatusBarHidden: Bool {
         return true
     }

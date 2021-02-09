@@ -2,28 +2,43 @@ import SpriteKit
 import UIKit
 
 class GameScene: SKScene {
+    // player object
     var player: Player!
-    var distanceLabel: SKLabelNode!
-    var ground:SKSpriteNode!
-    var obstacle: Obstacle!
-    var moonObject: SKSpriteNode!
-    var stars: [SKSpriteNode]!
-    var backgroundObjects: [SKSpriteNode]!
-    var backgroundMusic: SKAudioNode!
-    var powerUp: SKSpriteNode!
-    var backgroundSpeed:CGFloat = 1.0
-    var resourcesLoaded = false
-    var gameover = false
+    // color of player cube
     var playerColor: UIColor!
+    // distance label placed at the top of the screen
+    var distanceLabel: SKLabelNode!
+    // ground node
+    var ground:SKSpriteNode!
+    // current obstacle object
+    var obstacle: Obstacle!
+    // moon node
+    var moonObject: SKSpriteNode!
+    // array with moving stars nodes
+    var stars: [SKSpriteNode]!
+    // array with moving background nodes
+    var backgroundObjects: [SKSpriteNode]!
+    // speed of the buildings
+    var backgroundSpeed:CGFloat = 1.0
+    // node with background music
+    var backgroundMusic: SKAudioNode!
+    // bool variable that determines whether resources have been loaded
+    var resourcesLoaded = false
+    // bool variable that control if game is over
+    var gameover = false
+    // game area view
     var gameAreaView: SKView!
-    var powerUpCanSpawn = false
-    var powerUpPos: CGFloat = 0
+    // powerUp object
+    var powerUp: PowerUp!
+    // labels that shows up when the game is over
     var gameoverLabel = SKLabelNode(text: "GAME OVER!")
     var tapToBackLabel = SKLabelNode(text: "tap to go back to menu")
+    // bool variable that determines whether music have been muted
     var musicSwitch = true
+    // hint node that shows where next obstacle will be placed
     var hint = SKSpriteNode(color: UIColor(named: "HintColor")!, size: CGSize(width: 5, height: 5))
-    override func didMove(to view: SKView) {        
-
+    
+    override func didMove(to view: SKView){
         // create player object
         let cube = SKSpriteNode(color: UIColor(named: "PlayerColor")!, size: CGSize(width: frame.width/10, height: frame.width/10))
         cube.position = CGPoint(x: frame.midX, y: frame.midY + cube.size.height*4)
@@ -32,15 +47,17 @@ class GameScene: SKScene {
         // create cube physics
         cube.physicsBody = SKPhysicsBody(rectangleOf: cube.size)
         cube.physicsBody?.restitution = 0.0
-        cube.zPosition = 1
+        cube.zPosition = 2
         cube.physicsBody!.contactTestBitMask = cube.physicsBody!.collisionBitMask
         cube.physicsBody?.allowsRotation = false
+        
+        // create player object
         player = Player(body: cube)
-//        addChild(player.body)
 
         // set world physics
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0.0, dy: 0.0)
+        // create rect bigger than frame size
         let newRect = CGRect(x: frame.minX - player.body.size.width-2, y: frame.minY, width: frame.width+player.body.size.width+2, height: frame.height)
         physicsBody = SKPhysicsBody(edgeLoopFrom: newRect)
 
@@ -55,6 +72,16 @@ class GameScene: SKScene {
         ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size)
         ground.physicsBody?.isDynamic = false
         addChild(ground)
+        
+        // create powerUp Object
+        powerUp = PowerUp(body: SKSpriteNode(color: UIColor(named: "PowerUpColor")!, size: CGSize(width: 10, height: 10)))
+        // create powerUp physics
+        powerUp.body.physicsBody = SKPhysicsBody(rectangleOf: powerUp.body.size)
+        powerUp.body.physicsBody?.isDynamic = false
+        powerUp.body.name = "powerUp"
+        // create powerUp animations
+        powerUp.body.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(-CGFloat.pi/2), duration: 0.666)))
+        powerUp.body.run(SKAction.repeatForever(SKAction.sequence([SKAction.colorize(with: playerColor, colorBlendFactor: 1, duration: 0.333),SKAction.colorize(with: UIColor(named: "PowerUpColor")!, colorBlendFactor: 1, duration: 0.333)])))
         
         // generate obstacles
         obstacle = createRandomObstacle()
@@ -77,13 +104,14 @@ class GameScene: SKScene {
         hint.zPosition = 2
         addChild(hint)
         
+        // create game over label
         gameoverLabel.position = CGPoint(x: frame.midX, y: frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2)
         gameoverLabel.fontColor = UIColor(named: "TextColor")!
         gameoverLabel.zPosition = 2
         gameoverLabel.fontSize = 32
         addChild(gameoverLabel)
         
-        
+        // tap to go back label
         tapToBackLabel.position = CGPoint(x: frame.midX, y: gameoverLabel.position.y - 30)
         tapToBackLabel.fontColor = UIColor(named: "TextColor")!
         tapToBackLabel.zPosition = 2
@@ -92,6 +120,7 @@ class GameScene: SKScene {
         
         tapToBackLabel.run(SKAction.repeatForever(SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.8), SKAction.scale(by: 0.9, duration: 0.8)])))
         
+        // hide labels until game is over
         gameoverLabel.isHidden = true
         tapToBackLabel.isHidden = true
         
@@ -107,13 +136,9 @@ class GameScene: SKScene {
         
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
-        
-        powerUp = SKSpriteNode(color: UIColor.red, size: CGSize(width: 10, height: 10))
-        powerUp.physicsBody = SKPhysicsBody(rectangleOf: powerUp.size)
-        powerUp.physicsBody?.isDynamic = false
-        powerUp.name = "powerUp"
     }
     
+    // recognize swipe direction and set player direction
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {
             switch sender.direction {
@@ -126,6 +151,7 @@ class GameScene: SKScene {
             }
         }
     }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         player.direction = .center
         if let _ =  player.body.action(forKey: "RotateCube"){
@@ -134,6 +160,7 @@ class GameScene: SKScene {
         else{
             player.body.run(SKAction.rotate(byAngle: CGFloat(-CGFloat.pi/2), duration: 0.15), withKey: "RotateCube")
         }
+        
         // present start scene
         if gameover{
             let scene = StartScene()
@@ -149,10 +176,8 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    }
-
     override func update(_ currentTime: TimeInterval) {
+        // if resources not have been loaded
         if !resourcesLoaded{
             player.body.color = playerColor!
             addChild(player.body)
@@ -174,6 +199,7 @@ class GameScene: SKScene {
                 }
             }
         }
+        
         // set hint position
         hint.isHidden = false
         let midH = frame.maxY - (ground.position.y + 0.5*ground.size.height) / 2
@@ -194,7 +220,7 @@ class GameScene: SKScene {
         // Update distance label
         distanceLabel.text = String(format:"%.1f", player.distance)+"m"
         
-        // if player cube position is lower than minX - slow down background and obstacle
+        // if player cube position is lower than minX - slow down background and obstacle and set game over
         if player.body.position.x + player.body.size.width/2 < frame.minX{
             var dx1 = min(obstacle.speed, backgroundSpeed)
             var dx2 = dx1/max(obstacle.speed, backgroundSpeed) * dx1
@@ -208,7 +234,7 @@ class GameScene: SKScene {
             }
             gameOver()
         }
-
+        // while game is running
         else{
             controlPlayer()
             // increase speed every 10 meters
@@ -225,8 +251,10 @@ class GameScene: SKScene {
         // move obstacle
         obstacle.body.position.x -= obstacle.speed
         
-        if powerUpCanSpawn{
-            powerUp.removeFromParent()
+        // if powerUp can spawn set its position
+        if powerUp.canSpawn{
+            var powerUpPos: CGFloat = 0
+            powerUp.body.removeFromParent()
             switch obstacle.orientation {
             case .bottom:
                 powerUpPos = frame.maxY - (frame.maxY - obstacle.body.frame.maxY) / 2
@@ -243,20 +271,21 @@ class GameScene: SKScene {
             default:
                 powerUpPos = CGFloat.random(in: frame.maxY...obstacle.body.frame.maxY)
             }
-            powerUp.position = CGPoint(x: obstacle.body.position.x, y: powerUpPos)
-            addChild(powerUp)
-            powerUpCanSpawn = false
+            powerUp.body.position = CGPoint(x: obstacle.body.position.x, y: powerUpPos)
+            addChild(powerUp.body)
+            powerUp.canSpawn = false
         }
         
-        powerUp.position.x -= obstacle.speed
+        // move powerUp with obstacle
+        powerUp.body.position.x -= obstacle.speed
 
         
-                // check if all background objects left the screen
+        // check if all background objects left the screen
         if backgroundObjects.count == 0{
             backgroundObjects = createRandomBackroundObjects()
         }
         
-        
+        // iterate through all background objects
         for obj in backgroundObjects{
             // move background objects
             obj.position.x -= backgroundSpeed
@@ -277,6 +306,7 @@ class GameScene: SKScene {
             }
         }
     }
+
     func controlPlayer(){
         // control x-axis position
         if player.body.position.x >= frame.midX-2{
@@ -300,6 +330,7 @@ class GameScene: SKScene {
             player.direction = .center
         }
     }
+    
     func gameOver(){
         gameover = true
         if UserDefaults.standard.float(forKey: "Highscore") < player.distance{
@@ -312,6 +343,7 @@ class GameScene: SKScene {
         }
 
     }
+    
     func createRandomBackroundObjects() -> [SKSpriteNode] {
         // result array
         var backgroundObjects = [SKSpriteNode]()
@@ -362,6 +394,7 @@ class GameScene: SKScene {
         }
         return backgroundObjects
     }
+    
     func createRandomObstacle() -> Obstacle {
         // choose orientation on the screen (bottom, top, center)
         let orientation = Int.random(in: 0..<3)
@@ -395,15 +428,18 @@ class GameScene: SKScene {
         }
         
         // set physics
-        obstacleObject.body.physicsBody = SKPhysicsBody(rectangleOf: obstacleObject.body.size)
-        obstacleObject.body.physicsBody?.isDynamic = false
-        obstacleObject.body.physicsBody?.allowsRotation = false
-        
+        if !powerUp.collected{
+            obstacleObject.body.physicsBody = SKPhysicsBody(rectangleOf: obstacleObject.body.size)
+            obstacleObject.body.physicsBody?.isDynamic = false
+            obstacleObject.body.physicsBody?.allowsRotation = false
+        }
         // add obstacle
         addChild(obstacleObject.body)
-        powerUpCanSpawn = true
+        let powerUpChance = Int.random(in: powerUp.chanceRange)
+        powerUp.canSpawn = (powerUpChance == powerUp.luckyNumber && !powerUp.collected)
         return obstacleObject
     }
+    
     func createRandomStars() -> [SKSpriteNode]{
         // result array
         var result = [SKSpriteNode]()
@@ -418,6 +454,7 @@ class GameScene: SKScene {
         }
         return result
     }
+    
     func cubeCollisionBetween(cube: SKNode, object: SKNode) {
         if object.name == "ground" {
             player.canJump = true
@@ -429,13 +466,23 @@ class GameScene: SKScene {
             player.canJump = true
         }
         if object.name == "powerUp" {
-            print("PowerUp!")
-            powerUp.removeFromParent()
+            powerUpPlayer()
+            powerUp.body.removeFromParent()
         }
     }
+    
     func cubeStopCollisionBetween(cube: SKNode, object: SKNode) {
         if object.name == "obstacle" {
             player.collideWithObstacle = false
+        }
+    }
+    
+    func powerUpPlayer(){
+        powerUp.collected = true
+        self.run(SKAction.colorize(with: UIColor(named: "BackgroundLightColor")!, colorBlendFactor: 1.0, duration: 1.0))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            self.powerUp.collected = false
+            self.run(SKAction.colorize(with: UIColor(named: "BackgroundColor")!, colorBlendFactor: 1.0, duration: 1.0))
         }
     }
 

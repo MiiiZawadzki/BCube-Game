@@ -2,21 +2,37 @@ import SpriteKit
 import UIKit
 
 class StartScene: SKScene {
+    // game area view
     var gameAreaView: SKView!
+    // ground node
     var ground:SKSpriteNode!
+    // moon node
     var moonObject: SKSpriteNode!
+    // array with moving stars nodes
     var stars: [SKSpriteNode]!
+    // array with moving background nodes
     var backgroundObjects: [SKSpriteNode]!
+    // node with background music
     var backgroundMusic: SKAudioNode!
+    // player object
     var player: Player!
+    // color of player cube
     var playerColor: UIColor!
+    // bool variable that determines whether resources have been loaded
     var resourcesLoaded = false
+    // bool variable that determines if game has started
     var gameSceneSwitch = false
+    // bool variable that determines if user selected customize
     var customizeSceneSwitch = false
+    // bool variable that determines if scene is loaded first time
     var firstRun = true
+    // bool variable that determines whether music have been muted
     var musicSwitch = true
+    
     override func didMove(to view: SKView) {
+        // create world physics
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+        
         // create player object
         let cube = SKSpriteNode(color: UIColor(named: "PlayerColor")!, size: CGSize(width: frame.width/10, height: frame.width/10))
         cube.position = CGPoint(x: frame.midX, y: frame.midY + cube.size.height*4)
@@ -108,6 +124,7 @@ class StartScene: SKScene {
         
         
     }
+    // recognize swipe direction and set proper bool variable (game / customize)
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {
             switch sender.direction {
@@ -125,14 +142,17 @@ class StartScene: SKScene {
                 ground.physicsBody?.isDynamic = true
                 customizeSceneSwitch = true
             default:
-                print("down")
+                print("")
             }
         }
     }
+    
     override func update(_ currentTime: TimeInterval) {
+        // set player color
         if let color = playerColor{
             player.body.color = color
         }
+        // present game scene if gameSceneSwitch has been set to true and animation ended
         if gameSceneSwitch && player.body.position.y >= frame.midY + player.body.size.height*4 - 1{
             let scene = GameScene()
             scene.backgroundColor = UIColor(named: "BackgroundColor")!
@@ -145,6 +165,7 @@ class StartScene: SKScene {
             gameAreaView.presentScene(scene)
             gameSceneSwitch = false
         }
+        // present customize scene if gameSceneSwitch has been set to true and animation ended
         if customizeSceneSwitch && player.body.position.y <= frame.midY - player.body.size.height*4 + 1{
             let scene = CustomizeScene()
             scene.size = frame.size
@@ -157,6 +178,7 @@ class StartScene: SKScene {
             gameAreaView.presentScene(scene)
             customizeSceneSwitch = false
         }
+        // if resources not have been loaded and it is not first run
         if !resourcesLoaded && !firstRun{
             player.body.color = playerColor
             for star in stars{
@@ -185,6 +207,7 @@ class StartScene: SKScene {
         }
 
     }
+    
     func createRandomStars() -> [SKSpriteNode]{
         var result = [SKSpriteNode]()
         for _ in 0..<Int.random(in: 80..<90) {
@@ -196,6 +219,7 @@ class StartScene: SKScene {
         }
         return result
     }
+    
     func createRandomBackroundObjects() -> [SKSpriteNode] {
         // result array
         var backgroundObjects = [SKSpriteNode]()

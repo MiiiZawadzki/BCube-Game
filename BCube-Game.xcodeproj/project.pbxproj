@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		900F3E4E25AB9398001BECEF /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900F3E4D25AB9398001BECEF /* Player.swift */; };
+		9027799125D1973000EF7D73 /* PowerUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9027799025D1973000EF7D73 /* PowerUp.swift */; };
 		906793E825A61D360096D4D3 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 906793E725A61D360096D4D3 /* Launch Screen.storyboard */; };
 		9077A0FF25A5F7A000931E9C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9077A0FE25A5F7A000931E9C /* AppDelegate.swift */; };
 		9077A10525A5F7A000931E9C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9077A10425A5F7A000931E9C /* GameScene.swift */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		900F3E4D25AB9398001BECEF /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		9027799025D1973000EF7D73 /* PowerUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUp.swift; sourceTree = "<group>"; };
 		906793E725A61D360096D4D3 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9077A0FB25A5F7A000931E9C /* BCube-Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BCube-Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9077A0FE25A5F7A000931E9C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		9019A9A025AC5D1B00CE14F2 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				904CF44E25D2BC480006E1DC /* Music */,
 				9077A10B25A5F7A200931E9C /* Assets.xcassets */,
 				9077A10825A5F7A000931E9C /* Main.storyboard */,
 				906793E725A61D360096D4D3 /* Launch Screen.storyboard */,
@@ -86,8 +89,18 @@
 				9077A0FE25A5F7A000931E9C /* AppDelegate.swift */,
 				900F3E4D25AB9398001BECEF /* Player.swift */,
 				90FCD37125B2416900B5377D /* Obstacle.swift */,
+				9027799025D1973000EF7D73 /* PowerUp.swift */,
 			);
 			path = Templates;
+			sourceTree = "<group>";
+		};
+		904CF44E25D2BC480006E1DC /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				908CDF4925CF2302009F9E91 /* introMusic.wav */,
+				908CDF4825CF2302009F9E91 /* mainMusic.wav */,
+			);
+			path = Music;
 			sourceTree = "<group>";
 		};
 		9077A0F225A5F7A000931E9C = {
@@ -109,8 +122,6 @@
 		9077A0FD25A5F7A000931E9C /* BCube-Game */ = {
 			isa = PBXGroup;
 			children = (
-				908CDF4925CF2302009F9E91 /* introMusic.wav */,
-				908CDF4825CF2302009F9E91 /* mainMusic.wav */,
 				9019A9A125AC5D5300CE14F2 /* Templates */,
 				9019A9A025AC5D1B00CE14F2 /* Assets */,
 				9019A99F25AC5CD100CE14F2 /* ViewControllers */,
@@ -199,6 +210,7 @@
 				90C3723525C1AE29006D09EC /* EmptyScene.swift in Sources */,
 				90FCD37225B2416900B5377D /* Obstacle.swift in Sources */,
 				9077A10725A5F7A000931E9C /* GameViewController.swift in Sources */,
+				9027799125D1973000EF7D73 /* PowerUp.swift in Sources */,
 				9077A0FF25A5F7A000931E9C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
