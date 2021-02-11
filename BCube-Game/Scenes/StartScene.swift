@@ -121,9 +121,8 @@ class StartScene: SKScene {
         
         swipeUp.addTarget(self, action: #selector(swipeRecognize(sender:)))
         swipeDown.addTarget(self, action: #selector(swipeRecognize(sender:)))
-        
-        
     }
+    
     // recognize swipe direction and set proper bool variable (game / customize)
     @objc func swipeRecognize(sender: UISwipeGestureRecognizer){
         if sender.state == .recognized {

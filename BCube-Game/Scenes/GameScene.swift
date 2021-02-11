@@ -311,13 +311,13 @@ class GameScene: SKScene {
         // control x-axis position
         if player.body.position.x >= frame.midX-2{
             player.body.position.x = frame.midX
-            player.distance += 0.05
+            player.distance += Float(0.01*obstacle.speed)
         }
         // speed up to go to center position
         else{
             player.body.position.x += 2
             if !player.collideWithObstacle{
-                player.distance += 0.1
+                player.distance += Float(0.02*obstacle.speed)
             }
         }
         // control y-axis position
