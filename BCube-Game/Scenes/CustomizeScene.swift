@@ -61,17 +61,20 @@ class CustomizeScene: SKScene{
         swipeLeft.addTarget(self, action: #selector(swipeRecognize(sender:)))
     
         // create rgb sliders
-        redSlider = UISlider(frame: CGRect(x: frame.width/4, y: player.body.position.y - 150, width: frame.width/2, height: 10))
+        redSlider = UISlider(frame: CGRect(x: frame.midX, y: player.body.position.y - 150, width: frame.width/2, height: 10))
+        redSlider.center.x = view.center.x
         redSlider.tintColor = UIColor.red
         redSlider.maximumValue = 255
         redSlider.minimumValue = 0
         
-        greenSlider = UISlider(frame: CGRect(x: frame.width/4, y: player.body.position.y - 100, width: frame.width/2, height: 10))
+        greenSlider = UISlider(frame: CGRect(x: frame.midX, y: player.body.position.y - 100, width: frame.width/2, height: 10))
+        greenSlider.center.x = view.center.x
         greenSlider.tintColor = UIColor.green
         greenSlider.maximumValue = 255
         greenSlider.minimumValue = 0
         
-        blueSlider = UISlider(frame: CGRect(x: frame.width/4, y: player.body.position.y - 50, width: frame.width/2, height: 10))
+        blueSlider = UISlider(frame: CGRect(x: frame.midX, y: player.body.position.y - 50, width: frame.width/2, height: 10))
+        blueSlider.center.x = view.center.x
         blueSlider.tintColor = UIColor.blue
         blueSlider.maximumValue = 255
         blueSlider.minimumValue = 0
