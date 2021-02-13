@@ -28,4 +28,6 @@ This game is created with:
     <img src="./Screens/gameScene_3.png" width="226">
     <img src="./Screens/gameOver.png" width="226">
   </p>
+  
+  <h2><a href="./Screens/gameplay.mp4">Gameplay video</a></h2>
 </details>
