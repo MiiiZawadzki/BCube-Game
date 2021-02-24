@@ -3,6 +3,10 @@
 ## General info
 Native IOS game designed for iPhones. This game is about making up or down gestures so that the square avoids the obstacles placed at the top, bottom or in the center of the screen, sometimes there is a power somewhere on the screen that allows the player to penetrate through obstacles for 10 seconds.
 
+## Gameplay
+ ![gameplay](./Screens/gameplay.gif)
+
+
 ## Technologies
 This game is created with:
 * Swift 5
@@ -30,4 +34,5 @@ This game is created with:
   </p>
   
   <h2><a href="./Screens/gameplay.mp4">Gameplay video</a></h2>
+  
 </details>
