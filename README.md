@@ -1,5 +1,7 @@
+![app banner](http://mzawadzki.com.pl/img/img5.png)
 # BCube - Game
-
+![Platforms](https://img.shields.io/badge/Platform-iOS-green.svg?style=flat)
+![Language](https://img.shields.io/badge/Swift-5.0-FA7343.svg?logo=swift&style=flat)
 ## General info
 Native IOS game designed for iPhones. This game is about making up or down gestures so that the square avoids the obstacles placed at the top, bottom or in the center of the screen, sometimes there is a power somewhere on the screen that allows the player to penetrate through obstacles for 10 seconds.
 
