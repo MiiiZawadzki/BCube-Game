@@ -1,4 +1,3 @@
-![app banner](http://mzawadzki.com.pl/img/img5.png)
 # BCube - Game
 ![Platforms](https://img.shields.io/badge/Platform-iOS-green.svg?style=flat)
 ![Language](https://img.shields.io/badge/Swift-5.0-FA7343.svg?logo=swift&style=flat)
